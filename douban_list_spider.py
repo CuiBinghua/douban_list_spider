@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 # --------------------------------------------
-# Author: i_chips <i_chips@qq.com>
+# Author: CuiBinghua <i_chips@qq.com>
 # Date: 2015-07-20 20:05:00
 # --------------------------------------------
 
@@ -16,6 +16,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 import time
+import re
 import requests
 from bs4 import BeautifulSoup
 
@@ -38,7 +39,7 @@ page_num = 2 # 每个标签抓取的页数, 必须为正整数
 
 
 file_content = '抓取时间：' + time.asctime() + '\n' # 最终要写到文件里的内容
-file_name = '_list.txt'
+file_partial_name = '_list.txt'
 
 
 def print_encode(s):
@@ -51,6 +52,14 @@ def get_rating(rating):
         return rating.string.strip()
     else:
         return '未知'
+
+
+def check_if_year_or_not(string):
+    year = re.findall("\d{4}$", string)
+    if 0 == len(year):
+        return False
+    else:
+        return True
 
 
 def movie_spider(soup, item_num):
@@ -84,10 +93,9 @@ def book_spider(soup, item_num):
             'class':'title'}).string.strip()
         desc = douban_info.find('div', {'class':'desc'}).string.strip()
         desc_list = desc.split('/')
-        # 出版时间一般会被拆分到desc_list[-2], 但是如果出版时间是2008/6这种格式, 那么2008会被拆分到desc_list[-3], 6会被拆分到desc_list[-2], 就需要特殊处理
-		# 此bug尚未解决, 因为isdigit()无法判断unicode string是否是数字 
-        if (desc_list[-3]).isdigit():
-            print 'digit'
+        # 一般情况下, 出版时间会被拆分到desc_list[-2]
+        # 但是如果出版时间是2008/6这种格式, 2008会被拆分到desc_list[-3], 6会被拆分到desc_list[-2], 就需要特殊处理
+        if (check_if_year_or_not(desc_list[-3])):
             split_pos = -4
         else:
             split_pos = -3
@@ -158,9 +166,7 @@ def do_spider():
 
 def do_write():
     """将最终结果写入文件"""
-    global file_name
-
-    file_name = object + file_name
+    file_name = object + file_partial_name
     print_encode('正在将抓取信息写入到文件%s中...' % file_name)
     f = open(file_name, 'w')
     f.write(file_content)
@@ -170,11 +176,11 @@ def do_write():
 
 def main():
     if object not in ['movie','book','music']:
-        print_encode('抓取对象的取值%s非法! 请为object设置movie, book或music中的任一值...' % object)
+        print_encode('抓取对象的取值%s无效! 请为object设置movie, book或music中的任一值...' % object)
         return
 
     if (type(page_num) != type(1)) or (page_num <= 0):
-        print_encode('抓取页数的取值%s非法! 请为page_num设置一个正整数...' % page_num)
+        print_encode('抓取页数的取值%s无效! 请为page_num设置一个正整数...' % page_num)
         return
 
     do_spider()
