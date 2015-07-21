@@ -94,7 +94,7 @@ def book_spider(soup, item_num):
         desc = douban_info.find('div', {'class':'desc'}).string.strip()
         desc_list = desc.split('/')
         # 一般情况下, 出版时间会被拆分到desc_list[-2]
-        # 但是如果出版时间是2008/6这种格式, 2008会被拆分到desc_list[-3], 6会被拆分到desc_list[-2], 就需要特殊处理
+        # 但是如果出版时间是2008/6这种格式, 2008会被拆分到desc_list[-3], 6会被拆分到desc_list[-2], 就需要进行特殊处理
         if (check_if_year_or_not(desc_list[-3])):
             split_pos = -4
         else:
