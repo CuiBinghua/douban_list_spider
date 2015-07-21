@@ -6,7 +6,7 @@
 # Date: 2015-07-20 20:05:00
 # --------------------------------------------
 
-"""douban_list_spider.py是一个简单的爬虫，可以根据关键字抓取豆瓣电影、豆瓣读书或豆瓣音乐的条目信息.
+"""douban_list_spider.py是一个简单的爬虫，可以根据关键字抓取豆瓣电影、豆瓣读书或者豆瓣音乐的条目信息.
 """
 
 
@@ -84,7 +84,7 @@ def book_spider(soup, item_num):
             'class':'title'}).string.strip()
         desc = douban_info.find('div', {'class':'desc'}).string.strip()
         desc_list = desc.split('/')
-        # 出版时间本应该被拆分到desc_list[-2], 但是如果出版时间是2008/6这种格式, 那么2008会被拆分到desc_list[-3], 6会被拆分到desc_list[-2], 所以需要特殊处理
+        # 出版时间一般会被拆分到desc_list[-2], 但是如果出版时间是2008/6这种格式, 那么2008会被拆分到desc_list[-3], 6会被拆分到desc_list[-2], 就需要特殊处理
 		# 此bug尚未解决, 因为isdigit()无法判断unicode string是否是数字 
         if (desc_list[-3]).isdigit():
             print 'digit'
